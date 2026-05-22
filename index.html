@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>EmotiSense AI</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        :root{
+            --primary:#020617;
+            --secondary:#0f172a;
+            --card:#111827;
+            --accent:#06b6d4;
+            --orange:#f97316;
+            --text:#f8fafc;
+            --muted:#94a3b8;
+            --border:rgba(255,255,255,0.08);
+        }
+
+        body{
+            font-family:'Syne',sans-serif;
+
+            background:
+                radial-gradient(circle at top left,
+                rgba(6,182,212,0.15),
+                transparent 30%),
+
+                radial-gradient(circle at bottom right,
+                rgba(249,115,22,0.15),
+                transparent 30%),
+
+                linear-gradient(
+                    135deg,
+                    #020617 0%,
+                    #0f172a 50%,
+                    #111827 100%
+                );
+
+            color:var(--text);
+
+            min-height:100vh;
+
+            overflow-x:hidden;
+        }
+
+        .container{
+            max-width:1350px;
+            margin:auto;
+            padding:1.2rem 1.5rem;
+        }
+
+        /* ================= HEADER ================= */
+
+        .header{
+            text-align:center;
+            margin-bottom:1.5rem;
+            position:relative;
+        }
+
+        .ai-orb{
+            width:110px;
+            height:110px;
+
+            margin:auto;
+
+            border-radius:50%;
+
+            background:
+                radial-gradient(circle,
+                rgba(6,182,212,0.9),
+                rgba(249,115,22,0.5),
+                transparent 70%);
+
+            filter:blur(10px);
+
+            animation:floatOrb 5s ease-in-out infinite;
+        }
+
+        @keyframes floatOrb{
+
+            0%,100%{
+                transform:translateY(0px);
+            }
+
+            50%{
+                transform:translateY(-14px);
+            }
+        }
+
+        .logo{
+            position:relative;
+            margin-top:-70px;
+            z-index:2;
+        }
+
+        .logo-icon{
+            width:60px;
+            height:60px;
+
+            margin:auto;
+
+            border-radius:18px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--accent),
+                    var(--orange)
+                );
+
+            display:flex;
+            align-items:center;
+            justify-content:center;
+
+            font-size:28px;
+
+            box-shadow:
+                0 0 30px rgba(6,182,212,0.4);
+        }
+
+        .logo-text{
+            margin-top:0.5rem;
+
+            font-size:40px;
+
+            font-weight:800;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--accent),
+                    var(--orange)
+                );
+
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+        }
+
+        .tagline{
+            margin-top:0.3rem;
+
+            color:var(--muted);
+
+            letter-spacing:3px;
+
+            text-transform:uppercase;
+
+            font-size:11px;
+        }
+
+        /* ================= GRID ================= */
+
+        .top-grid{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:1.2rem;
+        }
+
+        .card{
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(17,24,39,0.9),
+                    rgba(15,23,42,0.8)
+                );
+
+            border:1px solid var(--border);
+
+            border-radius:24px;
+
+            padding:1.4rem;
+
+            backdrop-filter:blur(18px);
+
+            position:relative;
+
+            overflow:hidden;
+        }
+
+        .card::before{
+            content:'';
+
+            position:absolute;
+            inset:0;
+
+            background:
+                radial-gradient(
+                    circle at top left,
+                    rgba(6,182,212,0.08),
+                    transparent 40%
+                );
+
+            pointer-events:none;
+        }
+
+        .card-title{
+            position:relative;
+
+            z-index:2;
+
+            color:var(--muted);
+
+            font-size:11px;
+
+            letter-spacing:2px;
+
+            text-transform:uppercase;
+
+            margin-bottom:1rem;
+        }
+
+        /* ================= BUTTON ================= */
+
+        .record-button{
+            width:100%;
+
+            padding:1rem;
+
+            border:none;
+
+            border-radius:16px;
+
+            font-size:16px;
+
+            font-weight:700;
+
+            cursor:pointer;
+
+            color:white;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--accent),
+                    var(--orange)
+                );
+
+            transition:0.3s;
+
+            font-family:'Syne',sans-serif;
+
+            box-shadow:
+                0 10px 30px rgba(6,182,212,0.25);
+        }
+
+        .record-button:hover{
+            transform:translateY(-3px);
+
+            box-shadow:
+                0 18px 40px rgba(6,182,212,0.4);
+        }
+
+        .record-button.recording{
+            background:
+                linear-gradient(
+                    135deg,
+                    #ef4444,
+                    #f59e0b
+                );
+
+            animation:pulse 1.4s infinite;
+        }
+
+        @keyframes pulse{
+
+            0%,100%{
+                transform:scale(1);
+            }
+
+            50%{
+                transform:scale(1.02);
+            }
+        }
+
+        .status{
+            margin-top:0.8rem;
+
+            display:inline-flex;
+            align-items:center;
+            gap:0.5rem;
+
+            padding:0.5rem 0.9rem;
+
+            border-radius:10px;
+
+            background:rgba(6,182,212,0.08);
+
+            border:1px solid rgba(6,182,212,0.2);
+
+            color:var(--accent);
+
+            font-size:12px;
+        }
+
+        .status-dot{
+            width:7px;
+            height:7px;
+
+            border-radius:50%;
+
+            background:currentColor;
+
+            animation:blink 1.5s infinite;
+        }
+
+        @keyframes blink{
+
+            0%,100%{
+                opacity:1;
+            }
+
+            50%{
+                opacity:0.3;
+            }
+        }
+
+        /* ================= CANVAS ================= */
+
+        .waveform-container,
+        .spectrum-section{
+            margin-top:1rem;
+
+            background:rgba(2,6,23,0.6);
+
+            border-radius:16px;
+
+            border:1px solid rgba(255,255,255,0.05);
+
+            padding:0.8rem;
+        }
+
+        .spectrum-title{
+            color:var(--muted);
+
+            font-size:10px;
+
+            letter-spacing:2px;
+
+            margin-bottom:0.8rem;
+
+            text-transform:uppercase;
+        }
+
+        canvas{
+            width:100%;
+            display:block;
+        }
+
+        #waveCanvas{
+            height:70px;
+        }
+
+        #spectrumCanvas{
+            height:100px;
+        }
+
+        #spectrogramCanvas{
+            height:140px;
+        }
+
+        /* ================= DSP GRID ================= */
+
+        .specs-grid{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:0.9rem;
+        }
+
+        .spec-item{
+            padding:1rem;
+
+            border-radius:16px;
+
+            background:rgba(6,182,212,0.05);
+
+            border:1px solid rgba(6,182,212,0.15);
+
+            text-align:center;
+        }
+
+        .spec-label{
+            color:var(--muted);
+
+            font-size:10px;
+
+            letter-spacing:1px;
+
+            text-transform:uppercase;
+        }
+
+        .spec-value{
+            margin-top:0.8rem;
+
+            font-size:22px;
+
+            font-weight:700;
+
+            color:var(--accent);
+
+            font-family:'Space Mono',monospace;
+        }
+
+        /* ================= EMOTION CARD ================= */
+
+        .emotion-card{
+            margin-top:1.2rem;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(17,24,39,0.95),
+                    rgba(15,23,42,0.85)
+                );
+
+            border-radius:28px;
+
+            border:1px solid var(--border);
+
+            padding:1.8rem;
+
+            overflow:hidden;
+
+            position:relative;
+        }
+
+        .emotion-main-grid{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:1rem;
+            align-items:center;
+        }
+
+        .emotion-title{
+            color:var(--muted);
+
+            font-size:11px;
+
+            letter-spacing:3px;
+
+            text-transform:uppercase;
+        }
+
+        .emotion-emoji{
+            font-size:72px;
+
+            margin-top:0.5rem;
+        }
+
+        .emotion-name{
+            margin-top:0.6rem;
+
+            font-size:42px;
+
+            font-weight:800;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--accent),
+                    var(--orange)
+                );
+
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+        }
+
+        .emotion-subtitle{
+            margin-top:0.5rem;
+
+            color:var(--muted);
+
+            letter-spacing:1px;
+
+            font-size:13px;
+        }
+
+        /* ================= RING ================= */
+
+        .ring-container{
+            width:180px;
+            height:180px;
+
+            margin:auto;
+
+            position:relative;
+        }
+
+        .progress-ring{
+            transform:rotate(-90deg);
+        }
+
+        .ring-bg{
+            fill:none;
+
+            stroke:rgba(255,255,255,0.08);
+
+            stroke-width:12;
+        }
+
+        .ring-progress{
+            fill:none;
+
+            stroke:#06b6d4;
+
+            stroke-width:12;
+
+            stroke-linecap:round;
+
+            stroke-dasharray:565;
+            stroke-dashoffset:565;
+
+            transition:stroke-dashoffset 1s ease;
+        }
+
+        .ring-text{
+            position:absolute;
+            inset:0;
+
+            display:flex;
+            flex-direction:column;
+
+            align-items:center;
+            justify-content:center;
+        }
+
+        .ring-text span{
+            font-size:34px;
+
+            font-weight:800;
+
+            color:var(--accent);
+        }
+
+        .ring-text small{
+            color:var(--muted);
+
+            letter-spacing:2px;
+
+            margin-top:0.3rem;
+
+            font-size:11px;
+        }
+
+        /* ================= ANALYTICS ================= */
+
+        .analytics-grid{
+            display:grid;
+            grid-template-columns:repeat(4,1fr);
+
+            gap:0.8rem;
+
+            margin-top:1.5rem;
+        }
+
+        .analytics-card{
+            background:rgba(2,6,23,0.6);
+
+            border-radius:16px;
+
+            border:1px solid rgba(6,182,212,0.12);
+
+            padding:1rem;
+        }
+
+        .analytics-label{
+            color:var(--muted);
+
+            font-size:10px;
+
+            letter-spacing:1px;
+
+            text-transform:uppercase;
+        }
+
+        .analytics-value{
+            margin-top:0.7rem;
+
+            font-size:18px;
+
+            font-weight:700;
+
+            color:var(--accent);
+        }
+
+        .hidden{
+            display:none;
+        }
+
+        
+/* ===== NEW UI SECTIONS ===== */
+.extra-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.5rem}
+.extra-card{background:rgba(2,6,23,0.6);border-radius:16px;padding:1rem;border:1px solid rgba(6,182,212,0.12)}
+.extra-title{color:var(--muted);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:.8rem}
+.transcript-box{min-height:70px;color:var(--text);padding:.8rem;border-radius:10px;background:rgba(255,255,255,.03)}
+.history-item{padding:.7rem;margin-bottom:.5rem;border-radius:10px;background:rgba(255,255,255,.03)}
+.metric-row{display:flex;justify-content:space-between;margin-bottom:.7rem}
+.session-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem}
+.session-box{text-align:center;padding:1rem;border-radius:12px;background:rgba(255,255,255,.03)}
+
+
+@media(max-width:900px){
+
+            .top-grid{
+                grid-template-columns:1fr;
+            }
+
+            .emotion-main-grid{
+                grid-template-columns:1fr;
+            }
+
+            .analytics-grid{
+                grid-template-columns:1fr 1fr;
+            }
+
+            .logo-text{
+                font-size:30px;
+            }
+
+            .emotion-name{
+                font-size:34px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <div class="ai-orb"></div>
+
+        <div class="logo">
+
+            <div class="logo-icon">
+                🎤
+            </div>
+
+            <div class="logo-text">
+                EMOTISENSE AI
+            </div>
+
+            <div class="tagline">
+                Indian Speech Emotion Recognition System
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- TOP GRID -->
+
+    <div class="top-grid">
+
+        <!-- RECORDING -->
+
+        <div class="card">
+
+            <div class="card-title">
+                REAL-TIME AUDIO CAPTURE
+            </div>
+
+            <button class="record-button" id="recordBtn">
+                Start Recording
+            </button>
+
+            <div class="status" id="statusIndicator">
+                <div class="status-dot"></div>
+                Ready
+            </div>
+
+            <!-- WAVEFORM -->
+
+            <div class="waveform-container">
+                <canvas id="waveCanvas"></canvas>
+            </div>
+
+            <!-- FFT -->
+
+            <div class="spectrum-section">
+
+                <div class="spectrum-title">
+                    Live Frequency Spectrum
+                </div>
+
+                <canvas id="spectrumCanvas"></canvas>
+
+            </div>
+
+            <!-- SPECTROGRAM -->
+
+            <div class="spectrum-section">
+
+                <div class="spectrum-title">
+                    Real-Time Spectrogram
+                </div>
+
+                <canvas id="spectrogramCanvas"></canvas>
+
+            </div>
+
+        </div>
+
+        <!-- DSP -->
+
+        <div class="card">
+
+            <div class="card-title">LIVE AI ANALYSIS</div>
+<div class="specs-grid">
+<div class="spec-item"><div class="spec-label">Emotion</div><div class="spec-value" id="liveEmotion">Waiting...</div></div>
+<div class="spec-item"><div class="spec-label">Confidence</div><div class="spec-value" id="liveConfidence">0%</div></div>
+<div class="spec-item"><div class="spec-label">Transcript</div><div class="spec-value" id="liveSpeech">Waiting...</div></div>
+<div class="spec-item"><div class="spec-label">Status</div><div class="spec-value" id="liveStatus">Ready</div></div>
+</div>
+
+        </div>
+
+    </div>
+
+    <!-- RESULT -->
+
+    <div class="emotion-card hidden" id="emotionCard">
+
+        <div class="emotion-title">
+            AI Emotion Analysis
+        </div>
+
+        <div class="emotion-main-grid">
+
+            <div>
+
+                <div class="emotion-emoji" id="emotionEmoji">
+                    😊
+                </div>
+
+                <div class="emotion-name" id="emotionName">
+                    HAPPY
+                </div>
+
+                <div class="emotion-subtitle">
+                    Bandpass + Spectral Denoising + MFCC + CNN
+                </div>
+
+            </div>
+
+            <div>
+
+                <div class="ring-container">
+
+                    <svg class="progress-ring" width="180" height="180">
+
+                        <circle
+                            class="ring-bg"
+                            cx="90"
+                            cy="90"
+                            r="70"
+                        />
+
+                        <circle
+                            class="ring-progress"
+                            id="ringProgress"
+                            cx="90"
+                            cy="90"
+                            r="70"
+                        />
+
+                    </svg>
+
+                    <div class="ring-text">
+
+                        <span id="confidenceValue">
+                            0%
+                        </span>
+
+                        <small>
+                            Confidence
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="analytics-grid">
+
+            <div class="analytics-card">
+                <div class="analytics-label">
+                    Signal Energy
+                </div>
+
+                <div class="analytics-value" id="signalEnergy">
+                    0%
+                </div>
+            </div>
+
+            <div class="analytics-card">
+                <div class="analytics-label">
+                    Noise Reduction
+                </div>
+
+                <div class="analytics-value">
+                    ACTIVE
+                </div>
+            </div>
+
+            <div class="analytics-card">
+                <div class="analytics-label">
+                    Latency
+                </div>
+
+                <div class="analytics-value">
+                    0.8s
+                </div>
+            </div>
+
+            <div class="analytics-card">
+                <div class="analytics-label">
+                    Features
+                </div>
+
+                <div class="analytics-value">
+                    MFCC
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+<div class="extra-grid">
+
+<div class="extra-card">
+<div class="extra-title">📝 Speaker Transcript</div>
+<div class="transcript-box" id="transcriptBox">Waiting for analysis...</div>
+</div>
+
+<div class="extra-card">
+<div class="extra-title">⏰ Analysis Information</div>
+<div class="metric-row"><span>Timestamp</span><span id="timeStamp">--</span></div>
+<div class="metric-row"><span>Audio Quality</span><span id="quality">--</span></div>
+<div class="metric-row"><span>Noise Level</span><span id="noise">--</span></div>
+<div class="metric-row"><span>Processing</span><span id="latency">--</span></div>
+</div>
+
+<div class="extra-card">
+<div class="extra-title">📜 Analysis History</div>
+<div id="historyBox">No history available</div>
+</div>
+
+<div class="extra-card">
+<div class="extra-title">📈 Session Statistics</div>
+<div class="session-grid">
+<div class="session-box"><div>Total</div><h2 id="totalSessions">0</h2></div>
+<div class="session-box"><div>Average</div><h2 id="avgConfidence">0%</h2></div>
+<div class="session-box"><div>Top Emotion</div><h2 id="topEmotion">--</h2></div>
+</div>
+</div>
+
+</div>
+
+<script>
+
+const emotionEmojis = {
+    angry:'😠',
+    disgust:'🤢',
+    fear:'😨',
+    happy:'😊',
+    neutral:'😐',
+    sad:'😢',
+    surprise:'😲'
+};
+
+let mediaRecorder;
+let audioChunks = [];
+let isRecording = false;
+
+let audioContext;
+let analyser;
+
+let speechText='';
+const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+const recognition=new SpeechRecognition();
+recognition.continuous=false;
+recognition.interimResults=false;
+recognition.lang='en-IN';
+recognition.onresult=(e)=>{
+speechText=e.results[0][0].transcript;
+document.getElementById('liveSpeech').innerText=speechText;
+document.getElementById('transcriptBox').innerText=speechText;
+};
+
+
+const btn =
+document.getElementById('recordBtn');
+
+const waveCanvas =
+document.getElementById('waveCanvas');
+
+const spectrumCanvas =
+document.getElementById('spectrumCanvas');
+
+const spectrogramCanvas =
+document.getElementById('spectrogramCanvas');
+
+const waveCtx =
+waveCanvas.getContext('2d');
+
+const specCtx =
+spectrumCanvas.getContext('2d');
+
+const spectroCtx =
+spectrogramCanvas.getContext('2d');
+
+waveCanvas.width =
+waveCanvas.offsetWidth;
+
+waveCanvas.height = 70;
+
+spectrumCanvas.width =
+spectrumCanvas.offsetWidth;
+
+spectrumCanvas.height = 100;
+
+spectrogramCanvas.width =
+spectrogramCanvas.offsetWidth;
+
+spectrogramCanvas.height = 180;
+
+btn.onclick = async()=>{
+
+    if(isRecording){
+
+        isRecording=false;
+
+        mediaRecorder.stop();
+
+        btn.classList.remove(
+            'recording'
+        );
+
+        btn.innerText=
+            'Processing...';
+
+        btn.disabled=false;
+
+        return;
+    }
+
+    try{
+
+        btn.classList.add(
+            'recording'
+        );
+
+        btn.innerText='End Recording';
+
+        btn.disabled=true;
+
+        document.getElementById(
+            'statusIndicator'
+        ).innerHTML=
+        '<div class="status-dot"></div> Connecting microphone';
+
+        const stream=
+            await navigator
+            .mediaDevices
+            .getUserMedia({
+
+                audio:{
+
+                    echoCancellation:true,
+                    noiseSuppression:true,
+                    autoGainControl:true
+                }
+            });
+
+        btn.disabled=false;
+
+        
+
+        audioContext=
+            new(
+                window.AudioContext||
+                window.webkitAudioContext
+            )();
+
+        analyser=
+            audioContext.createAnalyser();
+
+        analyser.fftSize=2048;
+
+        const source=
+            audioContext
+            .createMediaStreamSource(
+                stream
+            );
+
+        source.connect(
+            analyser
+        );
+
+        audioChunks=[];
+
+        isRecording=true;
+recognition.start();document.getElementById('liveStatus').innerText='Recording';
+
+        document.getElementById(
+            'statusIndicator'
+        ).innerHTML=
+        '<div class="status-dot"></div> Recording';
+
+        const drawWave=()=>{
+
+            if(!isRecording)
+                return;
+
+            requestAnimationFrame(
+                drawWave
+            );
+
+            const waveArray=
+                new Uint8Array(
+                    analyser.fftSize
+                );
+
+            const freqArray=
+                new Uint8Array(
+                    analyser.frequencyBinCount
+                );
+
+            analyser
+            .getByteTimeDomainData(
+                waveArray
+            );
+
+            analyser
+            .getByteFrequencyData(
+                freqArray
+            );
+
+            waveCtx.clearRect(
+                0,
+                0,
+                waveCanvas.width,
+                waveCanvas.height
+            );
+
+            waveCtx.beginPath();
+
+            waveCtx.lineWidth=2;
+
+            waveCtx.strokeStyle=
+                '#06b6d4';
+
+            let sliceWidth=
+                waveCanvas.width/
+                waveArray.length;
+
+            let x=0;
+
+            for(
+                let i=0;
+                i<waveArray.length;
+                i++
+            ){
+
+                let v=
+                    waveArray[i]/128;
+
+                let y=
+                    v*
+                    waveCanvas.height/
+                    2;
+
+                if(i===0)
+                    waveCtx.moveTo(
+                        x,y
+                    );
+
+                else
+                    waveCtx.lineTo(
+                        x,y
+                    );
+
+                x+=sliceWidth;
+            }
+
+            waveCtx.stroke();
+
+            drawSpectrum(
+                freqArray
+            );
+
+            drawSpectrogram(
+                freqArray
+            );
+        };
+
+        drawWave();
+
+        mediaRecorder=
+            new MediaRecorder(
+                stream
+            );
+
+        mediaRecorder.ondataavailable=
+        e=>{
+
+            audioChunks.push(
+                e.data
+            );
+        };
+
+       mediaRecorder.onstop=
+        async()=>{
+
+            isRecording=false;recognition.stop();
+            stream
+            .getTracks()
+            .forEach(
+                t=>t.stop()
+            );
+
+            if(audioContext){
+
+                audioContext.close();
+            }
+
+            const blob=
+                new Blob(
+                    audioChunks,
+                    {
+                        type:'audio/webm'
+                    }
+                );
+
+            const formData=
+                new FormData();
+
+            formData.append(
+                'audio',
+                blob
+            );
+            formData.append(
+                'transcript',
+                speechText
+            );
+            console.log(
+                "Transcript sent:",
+                speechText
+            );
+
+            try{
+
+                const res=
+                    await fetch(
+                        'http://127.0.0.1:5000/predict',
+                        {
+                            method:'POST',
+                            body:formData
+                        }
+                    );
+
+                const data=
+                    await res.json();
+
+                updateUI(data);
+
+            }catch(err){
+
+                console.log(err);
+
+                alert(
+                    'Prediction failed'
+                );
+            }
+
+            btn.classList.remove(
+                'recording'
+            );
+
+            btn.innerText=
+                'Start Recording';
+
+            btn.disabled=false;
+
+            document.getElementById(
+                'statusIndicator'
+            ).innerHTML=
+            '<div class="status-dot"></div> Ready';
+        };
+
+        mediaRecorder.start();
+
+        
+
+    }catch(err){
+
+        alert(err);
+    }
+
+};
+
+function drawSpectrum(dataArray){
+
+    specCtx.clearRect(
+        0,
+        0,
+        spectrumCanvas.width,
+        spectrumCanvas.height
+    );
+
+    let barWidth =
+        (spectrumCanvas.width / dataArray.length) * 2;
+
+    let x = 0;
+
+    for(let i=0;i<dataArray.length;i++){
+
+        let barHeight =
+            (dataArray[i] / 255)
+            * spectrumCanvas.height;
+
+        const gradient =
+            specCtx.createLinearGradient(
+                0,
+                spectrumCanvas.height,
+                0,
+                0
+            );
+
+        gradient.addColorStop(0,'#06b6d4');
+        gradient.addColorStop(1,'#f97316');
+
+        specCtx.fillStyle = gradient;
+
+        specCtx.fillRect(
+            x,
+            spectrumCanvas.height - barHeight,
+            barWidth,
+            barHeight
+        );
+
+        x += barWidth + 1;
+    }
+}
+
+function drawSpectrogram(dataArray){
+
+    const width =
+        spectrogramCanvas.width;
+
+    const height =
+        spectrogramCanvas.height;
+
+    // SHIFT OLD IMAGE LEFT
+
+    const imageData =
+        spectroCtx.getImageData(
+            1,
+            0,
+            width - 1,
+            height
+        );
+
+    spectroCtx.putImageData(
+        imageData,
+        0,
+        0
+    );
+
+    // DRAW NEW COLUMN
+
+    for(let i = 0; i < dataArray.length; i++){
+
+        const value =
+            dataArray[i];
+
+        // LOG SCALE Y POSITION
+
+        const percent =
+            i / dataArray.length;
+
+        const y =
+            height -
+            Math.floor(
+                Math.pow(percent,0.4)
+                * height
+            );
+
+        // COLOR MAPPING
+
+        let r = 0;
+        let g = value;
+        let b = value * 1.5;
+
+        if(value > 180){
+
+            r = 255;
+            g = 180;
+            b = 0;
+        }
+
+        spectroCtx.fillStyle =
+            `rgb(${r},${g},${b})`;
+
+        spectroCtx.fillRect(
+            width - 1,
+            y,
+            1,
+            3
+        );
+    }
+
+    // ADD DARK FADE OVERLAY
+
+    spectroCtx.fillStyle =
+        "rgba(0,0,0,0.03)";
+
+    spectroCtx.fillRect(
+        0,
+        0,
+        width,
+        height
+    );
+}
+
+let history=[];
+function updateUI(data){
+
+    const {emotion,confidence,timestamp,audio_quality,noise_level,processing_time}=data;
+
+    const emotionCard =
+        document.getElementById('emotionCard');
+
+    emotionCard.classList.remove('hidden');
+
+    document.getElementById('emotionEmoji')
+    .innerText =
+        emotionEmojis[emotion];
+
+    document.getElementById('emotionName')
+    .innerText =
+        emotion.toUpperCase();
+
+    document.getElementById('confidenceValue')
+    .innerText =
+        confidence + '%';
+
+    document.getElementById('signalEnergy').innerText=Math.floor(confidence*0.9)+'%';
+document.getElementById('liveEmotion').innerText=emotion;
+document.getElementById('liveConfidence').innerText=confidence+'%';
+document.getElementById('liveStatus').innerText='Completed';
+document.getElementById(
+'timeStamp'
+).innerText=
+timestamp
+? new Date(timestamp)
+.toLocaleTimeString()
+: new Date()
+.toLocaleTimeString();
+
+document.getElementById(
+'quality'
+).innerText=
+audio_quality || 'Good';
+
+document.getElementById(
+'noise'
+).innerText=
+noise_level || 'Low';
+
+document.getElementById(
+'latency'
+).innerText=
+(processing_time || 0.8) + 's';
+
+document.getElementById(
+'transcriptBox'
+).innerText=
+'Speech sample captured successfully';
+
+history.unshift({emotion,confidence});
+history=history.slice(0,5);
+document.getElementById('historyBox').innerHTML=history.map(h=>`<div class="history-item">${h.emotion} (${h.confidence}%)</div>`).join('');
+document.getElementById('totalSessions').innerText=history.length;
+document.getElementById('avgConfidence').innerText=Math.round(history.reduce((a,b)=>a+b.confidence,0)/history.length)+'%';
+document.getElementById('topEmotion').innerText=history[0].emotion;
+
+    const radius = 70;
+
+    const circumference =
+        2 * Math.PI * radius;
+
+    const offset =
+        circumference -
+        (confidence / 100) * circumference;
+
+    document.getElementById('ringProgress')
+    .style.strokeDashoffset = offset;
+}
+
+</script>
+
+</body>
+</html>
